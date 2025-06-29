@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>🏠 Welcome, {{ session['username'] }}!</h1>
+    <p>Role: {{ role }}</p>
+    <a href="/logout">Logout</a>
+
+    <h2>💡 Light Status: {{ status.light }}</h2>
+    {% if role == 'admin' %}
+        <button onclick="toggleLight()">Toggle Light</button>
+    {% else %}
+        <p>(View only – only admin can control)</p>
+    {% endif %}
+
+    <h2>🌬️ Fan Status: {{ status.fan }}</h2>
+    {% if role == 'admin' %}
+        <button onclick="toggleFan()">Toggle Fan</button>
+    {% else %}
+        <p>(View only – only admin can control)</p>
+    {% endif %}
+
+    <script>
+        function toggleLight() {
+            fetch('/toggle_light', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => location.reload());
+        }
+
+        function toggleFan() {
+            fetch('/toggle_fan', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => location.reload());
+        }
+    </script>
+</body>
+</html>
