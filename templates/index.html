@@ -22,6 +22,9 @@
         <p>(View only – only admin can control)</p>
     {% endif %}
 
+    <h2>📷 Live Camera Feed</h2>
+    <img src="{{ url_for('camera_feed') }}" width="480">
+
     <script>
         function toggleLight() {
             fetch('/toggle_light', { method: 'POST' })
