@@ -34,7 +34,6 @@ body {
 }
 
 .header::before {
-  content: '🌱';
   font-size: 3rem;
   display: block;
   margin-bottom: 10px;
