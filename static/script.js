@@ -1,35 +1,43 @@
 function lightToggle() {
   const btn = document.getElementById('light-toggle');
   fetch('/toggle_light', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-          btn.classList.remove('active');
-          if (data.light_status === "ON") btn.classList.add('active');
-      })
-      .catch(err => console.error('Light toggle error:', err));
+    .then(res => res.json())
+    .then(data => {
+      btn.classList.remove('active');
+      if (data.light_status === "ON") btn.classList.add('active');
+      // Update status text
+      document.querySelector('.control-item .control-status').textContent = data.light_status;
+    })
+    .catch(err => console.error('Light toggle error:', err));
 }
 
 function fanToggle() {
   const btn = document.getElementById('fan-toggle');
   fetch('/toggle_fan', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-          btn.classList.remove('active');
-          if (data.fan_status === "ON") btn.classList.add('active');
-      })
-      .catch(err => console.error('Fan toggle error:', err));
+    .then(res => res.json())
+    .then(data => {
+      btn.classList.remove('active');
+      if (data.fan_status === "ON") btn.classList.add('active');
+      // Update status text
+      document.querySelectorAll('.control-item .control-status')[1].textContent = data.fan_status;
+    })
+    .catch(err => console.error('Fan toggle error:', err));
 }
 
 function valveToggle() {
   const btn = document.getElementById('valve-toggle');
   fetch('/toggle_valve', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-          btn.classList.remove('active');
-          if (data.valve_status === "OPEN") btn.classList.add('active');
-      })
-      .catch(err => console.error('Valve toggle error:', err));
+    .then(res => res.json())
+    .then(data => {
+      btn.classList.remove('active');
+      if (data.valve_status === "OPEN") btn.classList.add('active');
+      // Update status text
+      document.querySelectorAll('.control-item .control-status')[2].textContent = data.valve_status;
+    })
+    .catch(err => console.error('Valve toggle error:', err));
 }
+
+
 
 function setBrightness(value) {
   const display = document.getElementById('brightness-value');

@@ -134,7 +134,7 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
     background: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    padding: 14px;
+    padding: 18px;
     text-align: center;
 }
 
@@ -347,40 +347,40 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
       text-align: left;
     }
   }
-  
-  /* Dashboard Main Layout */
+  /* Dashboard Main Layout - Scaled Up Version */
 .dashboard-main {
-    max-width: 1200px;
+    max-width: 1400px; /* Increased from 1200px */
     margin: 0 auto;
-    padding: 20px;
+    padding: 25px; /* Increased from 20px */
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px; /* Increased from 20px */
   }
   
   /* Top Cards Row - Live Feed and Recent Intrusions */
   .top-cards-row {
     display: flex;
-    gap: 20px;
-    height: 280px; /* Fixed height for alignment */
+    gap: 25px; /* Increased from 20px */
+    height: 380px; /* Increased from 320px */
   }
   
-  /* Live Feed Card */
+  /* Live Feed Card - Scaled Up */
   .live-feed-card {
     flex: 2;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 20px;
+    border-radius: 20px; /* Increased from 16px */
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12); /* Enhanced shadow */
+    padding: 25px; /* Increased from 20px */
     display: flex;
     flex-direction: column;
   }
   
   .live-feed-card h2 {
-    margin: 0 0 15px 0;
-    font-size: 1.4rem;
+    margin: 0 0 20px 0; /* Increased margin */
+    font-size: 1.6rem; /* Increased from 1.4rem */
     color: #333;
     text-align: center;
+    font-weight: 600;
   }
   
   .live-camera-container {
@@ -389,7 +389,7 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
     justify-content: center;
     align-items: center;
     background: #000;
-    border-radius: 12px;
+    border-radius: 15px; /* Increased from 12px */
     overflow: hidden;
   }
   
@@ -397,62 +397,71 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
     width: 100%;
     height: 100%;
     object-fit: cover;
-    max-width: 480px;
-    max-height: 200px;
+    max-width: 560px; /* Increased from 480px */
+    max-height: 300px; /* Increased from 240px */
   }
   
-  /* Recent Intrusions Card */
+  /* Recent Intrusions Card - Scaled Up */
   .intrusions-card {
     flex: 1;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 20px;
+    border-radius: 20px; /* Increased from 16px */
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12); /* Enhanced shadow */
+    padding: 25px; /* Increased from 20px */
     display: flex;
     flex-direction: column;
-    min-width: 300px;
+    min-width: 360px; /* Increased from 320px */
   }
   
   .intrusions-card h2 {
-    margin: 0 0 15px 0;
-    font-size: 1.4rem;
+    margin: 0 0 20px 0; /* Increased margin */
+    font-size: 1.6rem; /* Increased from 1.4rem */
     color: #333;
     text-align: center;
+    font-weight: 600;
   }
   
   .intrusions-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
   
   .snapshots-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px; /* Increased from 15px */
     align-items: center;
   }
   
   .snapshot-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px;
+    gap: 15px; /* Increased from 12px */
+    padding: 12px; /* Increased from 10px */
     background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: 10px; /* Increased from 8px */
     width: 100%;
+    transition: transform 0.2s ease;
+  }
+  
+  .snapshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
   
   .snapshot-thumb {
-    width: 80px;
-    height: 60px;
+    width: 140px; /* Increased from 120px */
+    height: 105px; /* Increased from 90px */
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 10px; /* Increased from 8px */
     border: 2px solid #e0e0e0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15); /* Enhanced shadow */
   }
   
   .snapshot-time {
-    font-size: 0.9rem;
+    font-size: 1rem; /* Increased from 0.95rem */
     color: #666;
     font-weight: 500;
   }
@@ -461,63 +470,73 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
     text-align: center;
     color: #888;
     font-style: italic;
-    margin-top: 50px;
+    margin-top: 100px; /* Adjusted for new card height */
+    font-size: 1.1rem;
   }
   
-  /* Controllers Card */
+  /* Controllers Card - Scaled Up */
   .controllers-card {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 25px;
+    border-radius: 20px; /* Increased from 16px */
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12); /* Enhanced shadow */
+    padding: 30px; /* Increased from 25px */
   }
   
   .controllers-card h2 {
-    margin: 0 0 20px 0;
-    font-size: 1.4rem;
+    margin: 0 0 25px 0; /* Increased margin */
+    font-size: 1.6rem; /* Increased from 1.4rem */
     color: #333;
     text-align: center;
+    font-weight: 600;
   }
   
   .guest-notice {
     text-align: center;
     color: #ff6b6b;
     font-weight: 500;
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased from 15px */
+    font-size: 1.1rem;
   }
   
   .controls-row {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    gap: 30px;
+    gap: 35px; /* Increased from 30px */
   }
   
   .control-item {
     flex: 1;
     text-align: center;
-    padding: 15px;
+    padding: 20px; /* Increased from 15px */
     background: #f8f9fa;
-    border-radius: 12px;
+    border-radius: 15px; /* Increased from 12px */
     border: 2px solid #e9ecef;
+    transition: transform 0.2s ease;
+  }
+  
+  .control-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   }
   
   .control-item h3 {
-    margin: 0 0 15px 0;
-    font-size: 1.1rem;
+    margin: 0 0 18px 0; /* Increased margin */
+    font-size: 1.2rem; /* Increased from 1.1rem */
     color: #495057;
+    font-weight: 600;
   }
   
   .control-toggle {
     position: relative;
-    width: 60px;
-    height: 30px;
+    width: 70px; /* Increased from 60px */
+    height: 35px; /* Increased from 30px */
     background: #ccc;
     border: none;
-    border-radius: 15px;
+    border-radius: 18px; /* Increased from 15px */
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-bottom: 10px;
+    margin-bottom: 12px; /* Increased from 10px */
   }
   
   .control-toggle.active {
@@ -526,22 +545,22 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
   
   .toggle-slider {
     position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 24px;
-    height: 24px;
+    top: 4px; /* Adjusted for new size */
+    left: 4px; /* Adjusted for new size */
+    width: 27px; /* Increased from 24px */
+    height: 27px; /* Increased from 24px */
     background: white;
     border-radius: 50%;
     transition: transform 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
   
   .control-toggle.active .toggle-slider {
-    transform: translateX(30px);
+    transform: translateX(35px); /* Adjusted for new size */
   }
   
   .control-status {
-    font-size: 0.9rem;
+    font-size: 1rem; /* Increased from 0.9rem */
     font-weight: 600;
     color: #495057;
   }
@@ -549,35 +568,45 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
   .water-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px; /* Increased from 10px */
   }
   
   .water-valve, .water-flow {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px; /* Increased from 5px */
   }
   
   .water-valve span, .water-flow span {
-    font-size: 0.9rem;
+    font-size: 1rem; /* Increased from 0.9rem */
     color: #666;
   }
   
   /* Responsive Design */
   @media (max-width: 768px) {
+    .dashboard-main {
+      padding: 15px;
+    }
+    
     .top-cards-row {
       flex-direction: column;
       height: auto;
+      gap: 20px;
     }
     
     .live-feed-card, .intrusions-card {
-      min-height: 200px;
+      min-height: 280px;
+    }
+    
+    .snapshot-thumb {
+      width: 120px;
+      height: 90px;
     }
     
     .controls-row {
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
     }
     
     .control-item {
@@ -591,15 +620,38 @@ h1 { font-size: 2.2rem; font-weight: 700; color: #333; }
     }
     
     .live-feed-card, .intrusions-card, .controllers-card {
-      padding: 15px;
+      padding: 20px;
     }
     
     .snapshots-list {
-      gap: 8px;
+      gap: 15px;
     }
     
     .snapshot-item {
-      padding: 6px;
+      padding: 10px;
     }
+    
+    .snapshot-thumb {
+      width: 100px;
+      height: 75px;
+    }
+  }
+  .fixed-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0 8px 0;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    z-index: 999;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
+  }
+  
+  body {
+    padding-bottom: 48px; /* Prevent content from being hidden by footer */
   }
   

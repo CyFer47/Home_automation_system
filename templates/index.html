@@ -42,7 +42,7 @@
         <div class="intrusions-content">
           {% if snapshots %}
             <div class="snapshots-list">
-              {% for img in snapshots %}
+              {% for img in snapshots[:2] %}
                 <div class="snapshot-item">
                   <img src="{{ url_for('snapshot', filename=img) }}" class="snapshot-thumb" alt="Intrusion">
                   <div class="snapshot-time">{{ img.split('_')[1].replace('-', ':') }}</div>
