@@ -1,0 +1,12 @@
+<!-- templates/navigation.html -->
+<nav>
+    <ul class="nav-tabs">
+        <li><a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' else '' }}">Dashboard</a></li>
+        <li><a href="{{ url_for('light_control') }}" class="{{ 'active' if request.endpoint == 'light_control' else '' }}">Light Control</a></li>
+        <li><a href="{{ url_for('water_flow') }}" class="{{ 'active' if request.endpoint == 'water_flow' else '' }}">Water Flow</a></li>
+        <li><a href="{{ url_for('video_feed') }}" class="{{ 'active' if request.endpoint == 'video_feed' else '' }}">Video Feed</a></li>
+        <li><a href="{{ url_for('ventilation') }}" class="{{ 'active' if request.endpoint == 'ventilation' else '' }}">Ventilation</a></li>
+        <li><a href="{{ url_for('access_areas') }}" class="{{ 'active' if request.endpoint == 'access_areas' else '' }}">Access Areas</a></li>
+        <li><a href="{{ url_for('report') }}" class="{{ 'active' if request.endpoint == 'report' else '' }}">Report</a></li>
+    </ul>
+</nav>

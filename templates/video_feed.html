@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Live Video Feed{% endblock %}
+{% block content %}
+<header class="header"><h1>Live Video Feed</h1></header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}" class="active">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}">Report</a></li>
+</ul>
+<div class="video-feed-page-box">
+    <img src="{{ url_for('camera_feed') }}" alt="Live camera feed">
+</div>
+{% endblock %}

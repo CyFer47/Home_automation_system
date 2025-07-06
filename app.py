@@ -1,26 +1,39 @@
-# app.py
-
-import cv2
-import os
-from flask import (
-    Flask, render_template, request, redirect,
-    session, Response, jsonify, send_from_directory
-)
-
-# Corrected import block
-from utils.controller import (
-    toggle_light, toggle_fan, toggle_valve, set_brightness,
-    get_status, get_light_status, get_fan_status,
-    get_valve_status, get_water_status
-)
+from flask import Flask, render_template, request, redirect, session, Response, jsonify, send_from_directory, url_for
+from utils.controller import toggle_light, toggle_fan, get_status, set_brightness, get_light_status, get_fan_status, get_water_status, toggle_valve, get_valve_status
 from utils.auth import check_credentials
 from utils.detector import detect_and_log
+from utils.water_logger import log_water_flow, get_water_history, check_abnormal_consumption, get_hourly_consumption
+from utils.ventilation import get_env_status, control_ventilation, toggle_ventilation
+import cv2
+import os
+import csv
+from flask_mail import Mail, Message
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
-app.secret_key = 'your_very_secret_key_that_is_long_and_secure'
-CAMERA_INDEX = 1  # Use 0 for the default camera, or change if you have multiple
+app.secret_key = 'your_very_secret_key'
+CAMERA_INDEX = 1
 
-# ================== LOGIN & LOGOUT ===================
+# Email config (MUST be updated with your credentials)
+app.config['MAIL_SERVER'] = 'smtp.example.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = 'your_email@example.com'
+app.config['MAIL_PASSWORD'] = 'your_password'
+app.config['MAIL_USE_TLS'] = True
+mail = Mail(app)
+
+ADMIN_EMAIL_PATH = 'data/admin_email.txt'
+
+def get_admin_email():
+    if os.path.exists(ADMIN_EMAIL_PATH):
+        with open(ADMIN_EMAIL_PATH, 'r') as f:
+            return f.read().strip()
+    return "admin@example.com"
+
+def set_admin_email(email):
+    with open(ADMIN_EMAIL_PATH, 'w') as f:
+        f.write(email)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -31,8 +44,7 @@ def login():
             session['username'] = username
             session['role'] = role
             return redirect('/')
-        else:
-            return render_template('login.html', error="Invalid credentials")
+        return render_template('login.html', error="Invalid credentials")
     return render_template('login.html')
 
 @app.route('/logout')
@@ -40,114 +52,137 @@ def logout():
     session.clear()
     return redirect('/login')
 
-# ================== DASHBOARD ===================
 @app.route('/')
 def dashboard():
     if 'username' not in session:
         return redirect('/login')
-
-    # Get system status
-    status = get_status()
-    water_flow = get_water_status()
-
-    # Load latest 3 intrusion images
     snapshot_dir = 'snapshots'
+    if not os.path.exists(snapshot_dir):
+        os.makedirs(snapshot_dir)
     image_files = sorted(
         [f for f in os.listdir(snapshot_dir) if f.endswith('.jpg')],
         reverse=True
     )[:3]
-
     return render_template(
         'index.html',
-        status=status,
+        status=get_status(),
         role=session.get('role'),
         snapshots=image_files,
-        water_flow=water_flow
+        water_flow=get_water_status(),
+        admin_email=get_admin_email()
     )
 
-# ================== STATIC FILES & SNAPSHOTS ===================
-@app.route('/snapshots/<string:filename>')
+@app.route('/snapshots/<filename>')
 def snapshot(filename):
     return send_from_directory('snapshots', filename)
 
-# ================== API & CONTROL ROUTES ===================
+@app.route('/update_admin_email', methods=['POST'])
+def update_admin_email():
+    if session.get('role') == 'admin':
+        email = request.form.get('admin_email')
+        if email:
+            set_admin_email(email)
+    return redirect('/')
+
 @app.route('/toggle_light', methods=['POST'])
 def toggle_light_route():
-    if session.get('role') != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 403
+    if session.get('role') != 'admin': return jsonify({'error': 'Unauthorized'}), 403
     toggle_light()
     return jsonify({'light_status': get_light_status()})
 
 @app.route('/toggle_fan', methods=['POST'])
 def toggle_fan_route():
-    if session.get('role') != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 403
+    if session.get('role') != 'admin': return jsonify({'error': 'Unauthorized'}), 403
     toggle_fan()
     return jsonify({'fan_status': get_fan_status()})
 
 @app.route('/toggle_valve', methods=['POST'])
 def toggle_valve_route():
-    if session.get('role') != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 403
+    if session.get('role') != 'admin': return jsonify({'error': 'Unauthorized'}), 403
     toggle_valve()
     return jsonify({'valve_status': get_valve_status()})
 
 @app.route('/set_brightness', methods=['POST'])
 def set_brightness_route():
-    if session.get('role') != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 403
+    if session.get('role') != 'admin': return jsonify({'error': 'Unauthorized'}), 403
     value = int(request.form.get('brightness', 100))
     set_brightness(value)
-    return jsonify({'brightness': value, 'status': 'success'})
+    return jsonify({'status': 'success', 'brightness': value})
 
 @app.route('/get_status')
 def status_api():
-    if 'username' not in session:
-        return jsonify({'error': 'Unauthorized'}), 403
+    if 'username' not in session: return jsonify({'error': 'Unauthorized'}), 403
     return jsonify(get_status())
 
-@app.route('/water_status')
-def water_status_api():
-    if 'username' not in session:
-        return jsonify({'error': 'Unauthorized'}), 403
-    return jsonify(get_water_status())
+@app.route('/light-control')
+def light_control():
+    if 'username' not in session: return redirect('/login')
+    return render_template('light_control.html', status=get_status(), role=session.get('role'))
 
-# ================== CAMERA FEED ===================
+@app.route('/water-flow')
+def water_flow():
+    if 'username' not in session: return redirect('/login')
+    return render_template('water_flow.html', water_flow=get_water_status(), history=get_water_history(), abnormal=check_abnormal_consumption())
+
+@app.route('/video-feed')
+def video_feed():
+    if 'username' not in session: return redirect('/login')
+    return render_template('video_feed.html')
+
+@app.route('/ventilation', methods=['GET', 'POST'])
+def ventilation():
+    if 'username' not in session:
+        return redirect('/login')
+    if request.method == 'POST' and session.get('role') == 'admin':
+        toggle_ventilation()
+    return render_template('ventilation.html', env=get_env_status(), role=session.get('role'))
+
+@app.route('/access-areas')
+def access_areas():
+    if 'username' not in session: return redirect('/login')
+    return render_template('access_areas.html')
+
+@app.route('/report')
+def report():
+    if 'username' not in session: return redirect('/login')
+    return render_template('report.html')
+
+@app.route('/send_quick_report', methods=['POST'])
+def send_quick_report():
+    if 'username' not in session: return jsonify({'error': 'Unauthorized'}), 403
+    return jsonify({'message': 'Report Sent (Simulated)!'})
+
 def generate_frames():
     cap = cv2.VideoCapture(CAMERA_INDEX)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     if not cap.isOpened():
         print("Error: Could not open video stream.")
         return
-
     while True:
         success, frame = cap.read()
         if not success:
             break
-        
-        # Face detection and logging
         frame, detected = detect_and_log(frame)
         if detected:
-            cv2.putText(frame, "🟢 FACE DETECTED", (10, 30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        
+            cv2.putText(frame, "FACE DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         ret, buffer = cv2.imencode('.jpg', frame)
         if not ret:
             continue
-            
         frame_bytes = buffer.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-    
     cap.release()
 
 @app.route('/camera_feed')
 def camera_feed():
-    if 'username' not in session:
-        return redirect('/login')
+    if 'username' not in session: return redirect('/login')
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-# ================== START SERVER ===================
 if __name__ == '__main__':
-    os.makedirs('snapshots', exist_ok=True)
-    os.makedirs('data', exist_ok=True)
+    if not os.path.exists('data'): os.makedirs('data')
+    if not os.path.exists('snapshots'): os.makedirs('snapshots')
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(log_water_flow, 'interval', hours=1)
+    scheduler.start()
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -23,9 +23,9 @@ def toggle_valve():
 
 def set_brightness(level):
     global _light_brightness
-    if level in [25, 50, 75, 100]:
-        _light_brightness = level
-        # TODO: Implement PWM or DAC control to set brightness
+    if int(level) in [25, 50, 75, 100]:
+        _light_brightness = int(level)
+    # TODO: Implement PWM or DAC control to set brightness
 
 def get_status():
     return {
@@ -47,7 +47,7 @@ def get_valve_status():
 # Simulated water flow sensor status
 def get_water_status():
     # Example flow rate in liters per minute
-    flow_rate = 12.5  
+    flow_rate = 12.5
     return {
         'flow_rate': flow_rate,
         'valve_status': get_valve_status()

@@ -1,9 +1,0 @@
-
-# render.yaml
-services:
-  - type: web
-    name: smart-home-system
-    env: python
-    plan: free
-    buildCommand: ""
-    startCommand: "python app.py"

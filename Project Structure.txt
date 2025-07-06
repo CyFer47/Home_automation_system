@@ -1,0 +1,24 @@
+Home_automation_system/
+├── app.py
+├── utils/
+│   ├── controller.py
+│   ├── auth.py
+│   ├── detector.py
+│   ├── water_logger.py         # NEW: Water flow logging and analysis
+│   └── ventilation.py          # NEW: Ventilation control logic
+├── templates/
+│   ├── index.html
+│   ├── light_control.html      # NEW: Light control tab
+│   ├── water_flow.html         # NEW: Water flow tab
+│   ├── video_feed.html         # NEW: Video feed tab
+│   ├── ventilation.html        # NEW: Ventilation tab
+│   ├── access_areas.html       # NEW: Access areas tab (placeholder)
+│   └── report.html             # NEW: Report tab
+├── static/
+│   ├── style.css
+│   └── scripts.js
+├── snapshots/
+├── data/
+│   ├── water_history.csv       # NEW: Water flow/consumption log
+│   ├── abnormal_water.csv      # NEW: Abnormal water events
+│   └── report.csv              # NEW: Hourly report log

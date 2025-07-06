@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}System Reports{% endblock %}
+{% block content %}
+<header class="header"><h1>System Reports</h1></header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}" class="active">Report</a></li>
+</ul>
+<div class="card styled-page">
+    <p>Hourly reports are sent automatically. You can also send a quick report now.</p>
+    <button id="report-btn" onclick="sendQuickReport()" style="margin-top: 20px;">Send Quick Report</button>
+</div>
+{% endblock %}

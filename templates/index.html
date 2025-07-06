@@ -1,114 +1,107 @@
-<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block title %}Dashboard - Smart Home{% endblock %}
+{% block content %}
+<header class="header">
+    <h1>Smart Home System</h1>
+    <p class="subtitle">Monitor and control your environment. Welcome, {{ session.username }}! (<a href="/logout">Logout</a>)</p>
+    {% if role == 'admin' %}
+    <form class="admin-email-form" method="POST" action="{{ url_for('update_admin_email') }}">
+        <label for="admin_email">Admin Email:</label>
+        <input type="email" id="admin_email" name="admin_email" value="{{ admin_email }}" required>
+        <button type="submit">Update</button>
+    </form>
+    {% endif %}
+</header>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Home Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="dashboard-container">
-        <header class="header">
-            <h1>Smart Home Monitoring System</h1>
-            <p class="subtitle">Monitor and control your home-security.</p>
-            <p class="subtitle"></p>Welcome, {{ session.username }}! (<a href="/logout">Logout</a>)</p>
-        </header>
+<nav>
+    <ul class="nav-tabs">
+        <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+        <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+        <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+        <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+        <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+        <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+        <li><a href="{{ url_for('report') }}">Report</a></li>
+    </ul>
+</nav>
 
-        <main class="dashboard-content">
-            <div class="left-panel">
-                <!-- Camera Feed Section -->
-                <section class="camera-section card">
-                    <h2 class="section-title">📷 Live Feed</h2>
+<main id="dashboard-content" class="dashboard-content">
+    <div class="left-panel">
+        <div class="top-row">
+            <section class="card">
+                <h2 class="section-title">📷 Live Feed</h2>
+                <div class="camera-box">
                     <img src="{{ url_for('camera_feed') }}" alt="Live camera feed">
-                </section>
-
-                <!-- Controls Section -->
-                <section class="controls-section card">
-                    <h2 class="section-title">🎛 Controls</h2>
-                    {% if role != 'admin' %}
-                    <p class="auth-warning">You are logged in as a guest. Controls are disabled.</p>
+                </div>
+            </section>
+            <section class="card">
+                <h2 class="section-title">📸 Recent Intrusions</h2>
+                <div class="snapshots-container">
+                    {% if snapshots %}
+                        {% for img in snapshots %}
+                        <div class="snapshot-box">
+                            <img src="{{ url_for('snapshot', filename=img) }}" alt="Intrusion snapshot" class="snapshot-image">
+                            <p class="snapshot-timestamp">{{ img.replace('snapshot_', '').replace('.jpg', '').replace('_', ' ') }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-intrusions">No intrusions recorded yet.</p>
                     {% endif %}
-                    <div class="controls-grid">
-                        <!-- Light Control -->
-                        <div class="control-card">
-                            <h3 class="control-title">💡 Light</h3>
-                            <button 
-                                id="light-toggle" 
-                                class="toggle-button {% if status.light == 'ON' %}active{% endif %}" 
-                                onclick="lightToggle()"
-                                {% if role != 'admin' %}disabled{% endif %}>
-                            </button>
-                            <div class="slider-container">
-                                <label for="brightness-slider" class="slider-label">Brightness:</label>
-                                <input 
-                                    type="range" 
-                                    id="brightness-slider" 
-                                    min="25" max="100" step="25" 
-                                    value="{{ status.brightness }}" 
-                                    onchange="setBrightness(this.value)"
-                                    {% if role != 'admin' %}disabled{% endif %}>
-                                <span id="brightness-value">{{ status.brightness }}%</span>
-                            </div>
-                        </div>
-
-                        <!-- Fan Control -->
-                        <div class="control-card">
-                            <h3 class="control-title">🌬️ Fan</h3>
-                            <button 
-                                id="fan-toggle" 
-                                class="toggle-button {% if status.fan == 'ON' %}active{% endif %}" 
-                                onclick="fanToggle()"
-                                {% if role != 'admin' %}disabled{% endif %}>
-                            </button>
-                        </div>
-
-                        <!-- Valve Control -->
-                        <div class="control-card">
-                            <h3 class="control-title">🚰 Water Valve</h3>
-                            <button 
-                                id="valve-toggle" 
-                                class="toggle-button {% if status.valve == 'OPEN' %}active{% endif %}" 
-                                onclick="valveToggle()"
-                                {% if role != 'admin' %}disabled{% endif %}>
-                            </button>
-                        </div>
-
-                        <!-- Water Flow Display -->
-                        <div class="control-card">
-                            <h3 class="control-title">💧 Water Flow Rate</h3>
-                            <p id="water-flow-value" class="status-value">{{ water_flow.flow_rate }} L/min</p>
+                </div>
+            </section>
+        </div>
+        <div class="controls-system-row">
+            <section class="card">
+                <h2 class="section-title">🎛 Controls</h2>
+                {% if role != 'admin' %}
+                <p class="auth-warning">You are logged in as a guest. Controls are disabled.</p>
+                {% endif %}
+                <div class="controls-grid">
+                    <div class="control-card">
+                        <h3 class="control-title">💡 Light</h3>
+                        <button id="light-toggle" class="toggle-button {% if status.light == 'ON' %}active{% endif %}" onclick="lightToggle()" {% if role != 'admin' %}disabled{% endif %}></button>
+                        <div class="slider-container">
+                            <label for="brightness-slider" class="slider-label">Brightness:</label>
+                            <input type="range" id="brightness-slider" min="25" max="100" step="25" value="{{ status.brightness }}" onchange="setBrightness(this.value)" {% if role != 'admin' %}disabled{% endif %}>
+                            <span id="brightness-value">{{ status.brightness }}%</span>
                         </div>
                     </div>
-                </section>
-            </div>
-
-            <aside class="right-panel">
-                <!-- Recent Intrusions Section -->
-                <section class="intrusions-section">
-                    <h2 class="section-title">📸 Recent Intrusions</h2>
-                    <div class="snapshots-container">
-                        {% if snapshots %}
-                            {% for img in snapshots %}
-                            <div class="snapshot-box">
-                                <img src="{{ url_for('snapshot', filename=img) }}" alt="Intrusion snapshot" class="snapshot-image">
-                                <p class="snapshot-timestamp">{{ img.replace('snapshot_', '').replace('.jpg', '').replace('_', ' ') }}</p>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p>No intrusions recorded yet.</p>
-                        {% endif %}
+                    <div class="control-card">
+                        <h3 class="control-title">🌬️ Fan</h3>
+                        <button id="fan-toggle" class="toggle-button {% if status.fan == 'ON' %}active{% endif %}" onclick="fanToggle()" {% if role != 'admin' %}disabled{% endif %}></button>
                     </div>
-                </section>
-            </aside>
-        </main>
-
-        <footer class="footer">
-            <p>Smart Home System © 2024</p>
-        </footer>
+                    <div class="control-card">
+                        <h3 class="control-title">🚰 Valve</h3>
+                        <button id="valve-toggle" class="toggle-button {% if status.valve == 'OPEN' %}active{% endif %}" onclick="valveToggle()" {% if role != 'admin' %}disabled{% endif %}></button>
+                    </div>
+                    <div class="control-card">
+                        <h3 class="control-title">💧 Water Flow Rate</h3>
+                        <p id="water-flow-value" class="status-value">{{ water_flow.flow_rate }} L/min</p>
+                    </div>
+                </div>
+            </section>
+            <section class="card">
+                <h2 class="section-title">📊 System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Light:</span>
+                        <span class="status-value {{ 'status-on' if status.light == 'ON' else 'status-off' }}">{{ status.light }}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Fan:</span>
+                        <span class="status-value {{ 'status-on' if status.fan == 'ON' else 'status-off' }}">{{ status.fan }}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Valve:</span>
+                        <span class="status-value {{ 'status-on' if status.valve == 'OPEN' else 'status-off' }}">{{ status.valve }}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Brightness:</span>
+                        <span class="status-value">{{ status.brightness }}%</span>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+</main>
+{% endblock %}

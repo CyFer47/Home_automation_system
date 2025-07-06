@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Access Areas{% endblock %}
+{% block content %}
+<header class="header">
+    <h1>Access Areas</h1>
+</header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}" class="active">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}">Report</a></li>
+</ul>
+<div class="card styled-page">
+    <p>This section is under development. Settings will be available soon.</p>
+</div>
+{% endblock %}

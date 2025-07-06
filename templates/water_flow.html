@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Water Flow{% endblock %}
+{% block content %}
+<header class="header"><h1>Water Flow Monitoring</h1></header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}" class="active">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}">Report</a></li>
+</ul>
+<!-- Water Flow Monitoring Page -->
+<div class="water-flow-monitoring">
+
+    <!-- Current Flow Card -->
+    <div class="water-flow-card">
+      <h3>Current Flow</h3>
+      <p>{{ current_flow }} L/min</p>
+    </div>
+  
+    <!-- 5-Minute History Card -->
+    <div class="water-history-card">
+      <center><h4>History of hourly</h4></center>
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Flow Rate (L/min)</th>
+        </tr>
+        {% for row in history %}
+        <tr>
+          <td>{{ row.time }}</td>
+          <td>{{ row.flow_rate }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  
+  </div>
+  
+{% endblock %}

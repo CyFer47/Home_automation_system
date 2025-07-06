@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Light Control{% endblock %}
+{% block content %}
+<header class="header"><h1>Light Control</h1></header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}" class="active">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}">Report</a></li>
+</ul>
+<div class="card styled-page">
+    <div class="control-card" style="max-width: 300px; margin: auto;">
+        <h3 class="control-title">💡 Light</h3>
+        <button id="light-toggle" class="toggle-button" onclick="lightToggle()"></button>
+        <div class="slider-container">
+            <label for="brightness-slider">Brightness:</label>
+            <input type="range" id="brightness-slider" min="25" max="100" step="25" value="{{ status.brightness }}" onchange="setBrightness(this.value)">
+            <span id="brightness-value">{{ status.brightness }}%</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

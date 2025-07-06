@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Ventilation Control{% endblock %}
+{% block content %}
+<header class="header"><h1>Ventilation Control</h1></header>
+<ul class="nav-tabs">
+    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+    <li><a href="{{ url_for('light_control') }}">Light Control</a></li>
+    <li><a href="{{ url_for('water_flow') }}">Water Flow</a></li>
+    <li><a href="{{ url_for('video_feed') }}">Video Feed</a></li>
+    <li><a href="{{ url_for('ventilation') }}" class="active">Ventilation</a></li>
+    <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
+    <li><a href="{{ url_for('report') }}">Report</a></li>
+</ul>
+<div class="ventilation-cards">
+    <div class="vent-card">
+      <h3>Temperature</h3>
+      <p>{{ env.temperature | round(2) }}°C</p>
+    </div>
+    <div class="vent-card">
+      <h3>Humidity</h3>
+      <p>{{ env.humidity | round(2) }}%</p>
+    </div>
+    <div class="vent-card">
+      <h3>Ventilation Status</h3>
+      <p>{{ env.ventilation }}</p>
+      {% if role == 'admin' %}
+      <form method="post" style="margin-top: 12px;">
+        <button type="submit" class="vent-toggle-btn">
+          Toggle Ventilation
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  
+{% endblock %}
