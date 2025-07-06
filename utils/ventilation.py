@@ -1,20 +1,32 @@
-import random
+# utils/ventilation.py
+
+import board
+import adafruit_dht
 
 _ventilation_on = False
 
+dhtDevice = adafruit_dht.DHT11(board.D4)
+
 def get_env_status():
-    humidity = random.uniform(40, 80)
-    temperature = random.uniform(20, 35)
-    return {
-        'humidity': humidity,
-        'temperature': temperature,
-        'ventilation': "ON" if _ventilation_on else "OFF"
-    }
+    try:
+        temperature = dhtDevice.temperature
+        humidity = dhtDevice.humidity
+        return {
+            'temperature': temperature,
+            'humidity': humidity,
+            'ventilation': "ON" if _ventilation_on else "OFF"
+        }
+    except RuntimeError:
+        return {
+            'temperature': None,
+            'humidity': None,
+            'ventilation': "ON" if _ventilation_on else "OFF"
+        }
 
 def control_ventilation():
     env = get_env_status()
     global _ventilation_on
-    if env['humidity'] > 70 or env['temperature'] > 30:
+    if env['humidity'] and env['humidity'] > 70 or env['temperature'] and env['temperature'] > 30:
         _ventilation_on = True
 
 def toggle_ventilation():

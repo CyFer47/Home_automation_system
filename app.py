@@ -112,7 +112,15 @@ def set_brightness_route():
 @app.route('/get_status')
 def status_api():
     if 'username' not in session: return jsonify({'error': 'Unauthorized'}), 403
-    return jsonify(get_status())
+    # Merge relay/device status and environment status
+    status = get_status()
+    env = get_env_status()
+    status.update({
+        'temperature': env.get('temperature'),
+        'humidity': env.get('humidity'),
+        'ventilation': env.get('ventilation')
+    })
+    return jsonify(status)
 
 @app.route('/light-control')
 def light_control():

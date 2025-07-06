@@ -2,18 +2,22 @@
 
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-RELAY_LIGHT = 17  # GPIO pin for light relay
-RELAY_VALVE = 27  # GPIO pin for valve relay
+# GPIO pin assignments (adjust as needed)
+RELAY_LIGHT = 17
+RELAY_FAN = 27
+RELAY_VALVE = 22
 
+# Setup GPIO
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_LIGHT, GPIO.OUT)
+GPIO.setup(RELAY_FAN, GPIO.OUT)
 GPIO.setup(RELAY_VALVE, GPIO.OUT)
 
-# Set relays OFF initially (HIGH for most relay modules)
+# Initial states: relays OFF (HIGH)
 GPIO.output(RELAY_LIGHT, GPIO.HIGH)
+GPIO.output(RELAY_FAN, GPIO.HIGH)
 GPIO.output(RELAY_VALVE, GPIO.HIGH)
 
-# Simulated device states
 _light_status = False
 _fan_status = False
 _valve_status = False
@@ -24,11 +28,10 @@ def toggle_light():
     _light_status = not _light_status
     GPIO.output(RELAY_LIGHT, GPIO.LOW if _light_status else GPIO.HIGH)
 
-
 def toggle_fan():
     global _fan_status
     _fan_status = not _fan_status
-    # TODO: Add hardware control to toggle the fan
+    GPIO.output(RELAY_FAN, GPIO.LOW if _fan_status else GPIO.HIGH)
 
 def toggle_valve():
     global _valve_status
@@ -37,9 +40,8 @@ def toggle_valve():
 
 def set_brightness(level):
     global _light_brightness
-    if int(level) in [25, 50, 75, 100]:
-        _light_brightness = int(level)
-    # TODO: Implement PWM or DAC control to set brightness
+    # Implement PWM as needed for real hardware
+    _light_brightness = int(level)
 
 def get_status():
     return {
@@ -58,7 +60,6 @@ def get_fan_status():
 def get_valve_status():
     return "OPEN" if _valve_status else "CLOSED"
 
-# Simulated water flow sensor status
 def get_water_status():
     # Example flow rate in liters per minute
     flow_rate = 12.5
@@ -66,6 +67,3 @@ def get_water_status():
         'flow_rate': flow_rate,
         'valve_status': get_valve_status()
     }
-
-import atexit
-atexit.register(GPIO.cleanup)

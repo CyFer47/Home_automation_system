@@ -14,21 +14,63 @@
 <div class="ventilation-cards-row">
   <div class="vent-card">
     <h3>Temperature</h3>
-    <div class="vent-value">{{ env.temperature | round(2) }}°C</div>
+    <div class="vent-value"><span id="temp-value">{{ env.temperature | round(2) if env.temperature is not none else '--' }}</span>°C</div>
   </div>
   <div class="vent-card">
     <h3>Humidity</h3>
-    <div class="vent-value">{{ env.humidity | round(2) }}%</div>
+    <div class="vent-value"><span id="hum-value">{{ env.humidity | round(2) if env.humidity is not none else '--' }}</span>%</div>
   </div>
   <div class="vent-card">
     <h3>Ventilation</h3>
-    <div class="vent-value">{{ env.ventilation }}</div>
+    <div class="vent-value" id="vent-status">{{ env.ventilation }}</div>
     {% if role == 'admin' %}
-      <form method="POST" style="margin-top: 12px;">
-        <button type="submit" class="vent-toggle-btn">{% if env.ventilation == 'ON' %}Turn Off{% else %}Turn On{% endif %}</button>
+      <form method="POST" id="vent-toggle-form" style="margin-top: 12px;">
+        <button type="submit" class="vent-toggle-btn" id="vent-toggle-btn">
+          {% if env.ventilation == 'ON' %}Turn Off{% else %}Turn On{% endif %}
+        </button>
       </form>
     {% endif %}
   </div>
 </div>
-  
+
+<script>
+  setInterval(() => {
+    fetch('/get_status')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('temp-value').textContent = data.temperature != null ? data.temperature.toFixed(2) : '--';
+        document.getElementById('hum-value').textContent = data.humidity != null ? data.humidity.toFixed(2) : '--';
+        if (data.ventilation !== undefined) {
+          document.getElementById('vent-status').textContent = data.ventilation;
+          {% if role == 'admin' %}
+          const btn = document.getElementById('vent-toggle-btn');
+          if (btn) {
+            btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
+          }
+          {% endif %}
+        }
+      });
+  }, 5000);
+
+  {% if role == 'admin' %}
+  const form = document.getElementById('vent-toggle-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      fetch('{{ url_for("ventilation") }}', { method: 'POST' })
+        .then(() => {
+          fetch('/get_status')
+            .then(res => res.json())
+            .then(data => {
+              document.getElementById('vent-status').textContent = data.ventilation;
+              const btn = document.getElementById('vent-toggle-btn');
+              if (btn) {
+                btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
+              }
+            });
+        });
+    });
+  }
+  {% endif %}
+</script>
 {% endblock %}
