@@ -25,52 +25,79 @@
     </ul>
 </nav>
 
-<div class="dashboard-flex">
-  <!-- Live Feed Left -->
-  <div class="live-feed-section">
-    <h2>📷 Live Feed</h2>
-    <div class="camera-box">
-      <img src="{{ url_for('camera_feed') }}" alt="Live Feed" style="width: 320px; height: 240px; object-fit: cover;">
-    </div>
-  </div>
-  
-  <!-- Recent Intrusions Right -->
-  <div class="intrusions-section">
-    <h2>📸 Recent Intrusions</h2>
-    {% if snapshots %}
-      <div class="snapshots-container">
-        {% for img in snapshots %}
-          <div class="snapshot-box">
-            <img src="{{ url_for('snapshot', filename=img) }}" class="snapshot-image" alt="Intrusion">
-            <div class="snapshot-timestamp">{{ img.split('_')[1].replace('-', ':') }}</div>
-          </div>
-        {% endfor %}
+<div class="dashboard-main">
+    <!-- Top Row: Live Feed and Recent Intrusions Side by Side -->
+    <div class="top-cards-row">
+      <!-- Live Feed Card (Left) -->
+      <div class="live-feed-card">
+        <h2>📷 Live Feed</h2>
+        <div class="live-camera-container">
+          <img src="{{ url_for('camera_feed') }}" alt="Live Feed" class="live-camera-feed">
+        </div>
       </div>
-    {% else %}
-      <p>No intrusions recorded yet.</p>
-    {% endif %}
-  </div>
-</div>
-
-<!-- Controllers Row -->
-<div class="controllers-row">
-  <div class="control-card">
-    <h3>💡 Light</h3>
-    <button id="light-toggle" class="toggle-button{% if status.light == 'ON' %} active{% endif %}" onclick="lightToggle()">Toggle</button>
-  </div>
-  <div class="control-card">
-    <h3>🌬️ Fan</h3>
-    <button id="fan-toggle" class="toggle-button{% if status.fan == 'ON' %} active{% endif %}" onclick="fanToggle()">Toggle</button>
-  </div>
-  <div class="control-card">
-    <h3>💧 Water</h3>
-    <div>
-      <span>Valve: <span id="valve-status">{{ status.valve }}</span></span>
-      <button id="valve-toggle" class="toggle-button{% if status.valve == 'OPEN' %} active{% endif %}" onclick="valveToggle()">Toggle</button>
+      
+      <!-- Recent Intrusions Card (Right) -->
+      <div class="intrusions-card">
+        <h2>📸 Recent Intrusions</h2>
+        <div class="intrusions-content">
+          {% if snapshots %}
+            <div class="snapshots-list">
+              {% for img in snapshots %}
+                <div class="snapshot-item">
+                  <img src="{{ url_for('snapshot', filename=img) }}" class="snapshot-thumb" alt="Intrusion">
+                  <div class="snapshot-time">{{ img.split('_')[1].replace('-', ':') }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="no-intrusions">No intrusions recorded yet.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <div>
-      <span>Flow Rate: <span id="flow-rate">{{ water_flow.flow_rate }}</span> L/min</span>
+  
+    <!-- Bottom Row: Combined Controllers Card -->
+    <div class="controllers-card">
+      <h2>🎛️ Controls</h2>
+      {% if role != 'admin' %}
+        <p class="guest-notice">You are logged in as a guest. Controls are disabled.</p>
+      {% endif %}
+      
+      <div class="controls-row">
+        <!-- Light Control -->
+        <div class="control-item">
+          <h3>💡 Light</h3>
+          <button id="light-toggle" class="control-toggle{% if status.light == 'ON' %} active{% endif %}" onclick="lightToggle()">
+            <span class="toggle-slider"></span>
+          </button>
+          <div class="control-status">{{ status.light }}</div>
+        </div>
+        
+        <!-- Fan Control -->
+        <div class="control-item">
+          <h3>🌬️ Fan</h3>
+          <button id="fan-toggle" class="control-toggle{% if status.fan == 'ON' %} active{% endif %}" onclick="fanToggle()">
+            <span class="toggle-slider"></span>
+          </button>
+          <div class="control-status">{{ status.fan }}</div>
+        </div>
+        
+        <!-- Water Control -->
+        <div class="control-item">
+          <h3>💧 Water</h3>
+          <div class="water-controls">
+            <div class="water-valve">
+              <span>Valve: {{ status.valve }}</span>
+              <button id="valve-toggle" class="control-toggle{% if status.valve == 'OPEN' %} active{% endif %}" onclick="valveToggle()">
+                <span class="toggle-slider"></span>
+              </button>
+            </div>
+            <div class="water-flow">
+              <span>Flow: {{ water_flow.flow_rate }} L/min</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
