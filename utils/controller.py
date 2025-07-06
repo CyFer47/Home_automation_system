@@ -1,5 +1,18 @@
 # utils/controller.py
 
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+RELAY_LIGHT = 17  # GPIO pin for light relay
+RELAY_VALVE = 27  # GPIO pin for valve relay
+
+GPIO.setup(RELAY_LIGHT, GPIO.OUT)
+GPIO.setup(RELAY_VALVE, GPIO.OUT)
+
+# Set relays OFF initially (HIGH for most relay modules)
+GPIO.output(RELAY_LIGHT, GPIO.HIGH)
+GPIO.output(RELAY_VALVE, GPIO.HIGH)
+
 # Simulated device states
 _light_status = False
 _fan_status = False
@@ -9,7 +22,8 @@ _light_brightness = 70  # default brightness in %
 def toggle_light():
     global _light_status
     _light_status = not _light_status
-    # TODO: Add hardware control to toggle the light (e.g., GPIO, PWM)
+    GPIO.output(RELAY_LIGHT, GPIO.LOW if _light_status else GPIO.HIGH)
+
 
 def toggle_fan():
     global _fan_status
@@ -19,7 +33,7 @@ def toggle_fan():
 def toggle_valve():
     global _valve_status
     _valve_status = not _valve_status
-    # TODO: Add hardware control to open/close valve (e.g., relay control)
+    GPIO.output(RELAY_VALVE, GPIO.LOW if _valve_status else GPIO.HIGH)
 
 def set_brightness(level):
     global _light_brightness
@@ -52,3 +66,6 @@ def get_water_status():
         'flow_rate': flow_rate,
         'valve_status': get_valve_status()
     }
+
+import atexit
+atexit.register(GPIO.cleanup)
