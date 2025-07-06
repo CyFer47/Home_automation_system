@@ -11,7 +11,7 @@
     <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
     <li><a href="{{ url_for('report') }}">Report</a></li>
 </ul>
-<div class="video-feed-page-box">
-    <img src="{{ url_for('camera_feed') }}" alt="Live camera feed">
-</div>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
+    <img src="{{ url_for('camera_feed') }}" alt="Video Feed" style="width: 640px; height: 480px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);">
+  </div>
 {% endblock %}

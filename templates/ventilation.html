@@ -11,26 +11,24 @@
     <li><a href="{{ url_for('access_areas') }}">Access Areas</a></li>
     <li><a href="{{ url_for('report') }}">Report</a></li>
 </ul>
-<div class="ventilation-cards">
-    <div class="vent-card">
-      <h3>Temperature</h3>
-      <p>{{ env.temperature | round(2) }}°C</p>
-    </div>
-    <div class="vent-card">
-      <h3>Humidity</h3>
-      <p>{{ env.humidity | round(2) }}%</p>
-    </div>
-    <div class="vent-card">
-      <h3>Ventilation Status</h3>
-      <p>{{ env.ventilation }}</p>
-      {% if role == 'admin' %}
-      <form method="post" style="margin-top: 12px;">
-        <button type="submit" class="vent-toggle-btn">
-          Toggle Ventilation
-        </button>
-      </form>
-      {% endif %}
-    </div>
+<div class="ventilation-cards-row">
+  <div class="vent-card">
+    <h3>Temperature</h3>
+    <div class="vent-value">{{ env.temperature | round(2) }}°C</div>
   </div>
+  <div class="vent-card">
+    <h3>Humidity</h3>
+    <div class="vent-value">{{ env.humidity | round(2) }}%</div>
+  </div>
+  <div class="vent-card">
+    <h3>Ventilation</h3>
+    <div class="vent-value">{{ env.ventilation }}</div>
+    {% if role == 'admin' %}
+      <form method="POST" style="margin-top: 12px;">
+        <button type="submit" class="vent-toggle-btn">{% if env.ventilation == 'ON' %}Turn Off{% else %}Turn On{% endif %}</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
   
 {% endblock %}
