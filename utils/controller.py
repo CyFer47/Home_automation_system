@@ -1,17 +1,17 @@
-# utils/controller.py
-
 import RPi.GPIO as GPIO
+
+GPIO.setwarnings(False)  # Suppress GPIO warnings
 
 # GPIO pin assignments (adjust as needed)
 RELAY_LIGHT = 17
 RELAY_FAN = 27
 RELAY_VALVE = 22
 
-# Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_LIGHT, GPIO.OUT)
 GPIO.setup(RELAY_FAN, GPIO.OUT)
 GPIO.setup(RELAY_VALVE, GPIO.OUT)
+
 
 # Initial states: relays OFF (HIGH)
 GPIO.output(RELAY_LIGHT, GPIO.HIGH)
