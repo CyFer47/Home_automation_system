@@ -111,10 +111,10 @@ def set_brightness_route():
 
 @app.route('/get_status')
 def status_api():
-    if 'username' not in session: return jsonify({'error': 'Unauthorized'}), 403
-    control_ventilation()  # 🔁 Automatic ventilation based on temp/humidity
-    status = get_status()
-    env = get_env_status()
+    if 'username' not in session:
+        return jsonify({'error': 'Unauthorized'}), 403
+    status = get_status()  # Light/Fan/Valve status
+    env = get_env_status()  # Temperature/Humidity/Ventilation
     status.update({
         'temperature': env.get('temperature'),
         'humidity': env.get('humidity'),

@@ -90,12 +90,11 @@ function lightToggle() {
   
   // Live update for temperature/humidity (if not using inline script)
   setInterval(() => {
-      fetch('/get_status')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('temp-value').textContent = data.temperature != null ? data.temperature.toFixed(2) : '--';
-          document.getElementById('hum-value').textContent = data.humidity != null ? data.humidity.toFixed(2) : '--';
-        })
-        .catch(err => console.error('Auto-update error:', err));
+    fetch('/get_status')
+      .then(res => res.json())
+      .then(data => {
+        // console.log(data); ← try adding this line temporarily
+        ...
+      });
   }, 5000);
   
