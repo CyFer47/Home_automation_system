@@ -12,7 +12,7 @@
     <li><a href="{{ url_for('report') }}">Report</a></li>
 </ul>
 <div class="ventilation-cards-row">
-  <div class="vent-card">
+  <div class="vent-card" id="vent-card">
     <h3>Temperature</h3>
     <div class="vent-value"><span id="temp-value">{{ env.temperature | round(2) if env.temperature is not none else '--' }}</span>°C</div>
   </div>
@@ -34,43 +34,61 @@
 </div>
 
 <script>
+  const isAdmin = "{{ 'true' if role == 'admin' else 'false' }}" === "true";
+
   setInterval(() => {
     fetch('/get_status')
       .then(res => res.json())
       .then(data => {
-        document.getElementById('temp-value').textContent = data.temperature != null ? data.temperature.toFixed(2) : '--';
-        document.getElementById('hum-value').textContent = data.humidity != null ? data.humidity.toFixed(2) : '--';
+        const temp = parseFloat(data.temperature);
+        document.getElementById('temp-value').textContent = isNaN(temp) ? '--' : temp.toFixed(2);
+
+        const hum = parseFloat(data.humidity);
+        document.getElementById('hum-value').textContent = isNaN(hum) ? '--' : hum.toFixed(2);
+
         if (data.ventilation !== undefined) {
           document.getElementById('vent-status').textContent = data.ventilation;
-          {% if role == 'admin' %}
-          const btn = document.getElementById('vent-toggle-btn');
-          if (btn) {
-            btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
+
+          const ventCard = document.getElementById('vent-card');
+          if (ventCard) {
+            ventCard.style.backgroundColor = data.ventilation === 'ON' ? '#d4f4dd' : '#f8d7da';
           }
-          {% endif %}
+
+          if (isAdmin) {
+            const btn = document.getElementById('vent-toggle-btn');
+            if (btn) {
+              btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
+            }
+          }
         }
       });
   }, 5000);
 
-  {% if role == 'admin' %}
-  const form = document.getElementById('vent-toggle-form');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      fetch('{{ url_for("ventilation") }}', { method: 'POST' })
-        .then(() => {
-          fetch('/get_status')
-            .then(res => res.json())
-            .then(data => {
-              document.getElementById('vent-status').textContent = data.ventilation;
-              const btn = document.getElementById('vent-toggle-btn');
-              if (btn) {
-                btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
-              }
+  window.addEventListener('DOMContentLoaded', () => {
+    if (isAdmin) {
+      const form = document.getElementById('vent-toggle-form');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          fetch('{{ url_for("ventilation") }}', { method: 'POST' })
+            .then(() => {
+              fetch('/get_status')
+                .then(res => res.json())
+                .then(data => {
+                  document.getElementById('vent-status').textContent = data.ventilation;
+                  const btn = document.getElementById('vent-toggle-btn');
+                  if (btn) {
+                    btn.textContent = data.ventilation === 'ON' ? 'Turn Off' : 'Turn On';
+                  }
+                  const ventCard = document.getElementById('vent-card');
+                  if (ventCard) {
+                    ventCard.style.backgroundColor = data.ventilation === 'ON' ? '#d4f4dd' : '#f8d7da';
+                  }
+                });
             });
         });
-    });
-  }
-  {% endif %}
+      }
+    }
+  });
 </script>
 {% endblock %}

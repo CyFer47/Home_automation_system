@@ -25,8 +25,10 @@ def get_env_status():
 def control_ventilation():
     global _ventilation_on
     env = get_env_status()
-    if (env['humidity'] and env['humidity'] > 70) or (env['temperature'] and env['temperature'] > 30):
+    if (env['humidity'] is not None and env['humidity'] > 70) or (env['temperature'] is not None and env['temperature'] > 30):
         _ventilation_on = True
+    else:
+        _ventilation_on = False
 
 def toggle_ventilation():
     global _ventilation_on

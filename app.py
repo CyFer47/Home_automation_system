@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = 'your_very_secret_key'
 CAMERA_INDEX = 0
 
-# Email config (MUST be updated with your credentials)
+# Email config
 app.config['MAIL_SERVER'] = 'smtp.example.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'your_email@example.com'
@@ -112,7 +112,7 @@ def set_brightness_route():
 @app.route('/get_status')
 def status_api():
     if 'username' not in session: return jsonify({'error': 'Unauthorized'}), 403
-    # Merge relay/device status and environment status
+    control_ventilation()  # 🔁 Automatic ventilation based on temp/humidity
     status = get_status()
     env = get_env_status()
     status.update({
