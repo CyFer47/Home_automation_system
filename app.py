@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.secret_key = 'your_very_secret_key'
-CAMERA_INDEX = 1
+CAMERA_INDEX = 0
 
 # Email config (MUST be updated with your credentials)
 app.config['MAIL_SERVER'] = 'smtp.example.com'
